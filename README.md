@@ -20,8 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 # model & outputs         : bytes
 original text             : 672
-raw tokens                : 704
-tokens brotli compression : 351
+text brotli compression   : 351
 
 # llm tokens > brotli compression       : bytes
 > openhermes-2.5-mistral-7b.Q4_K_M.gguf : 196

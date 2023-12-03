@@ -1,9 +1,13 @@
 import brotli
 
 text = """
-HN's content guidelines place no restriction on comments to be on-topic, let alone decide what on-topic is.
+BSD Zero Clause License
 
-Do you really think there needs to be a guideline saying "comments should be on-topic"? Wouldn't you assume that based on both the guidelines and how we generally conduct ourselves in the comments? The guidelines don't say anything specifically about racism but surely you would agree that racist comments have no place here, right?
+Copyright (c) [2023] [thefatcheetah]
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """
 
 compressed = brotli.compress(text.encode('utf-8'))
