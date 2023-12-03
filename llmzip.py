@@ -5,16 +5,26 @@
 import torch
 from ctransformers import AutoModelForCausalLM
 
+repo = "TheBloke/juanako-7B-UNA-GGUF"
+model = "juanako-7b-una.Q4_K_M.gguf"
 
-llm = AutoModelForCausalLM.from_pretrained("TheBloke/OpenHermes-2.5-Mistral-7B-GGUF",
-                                            model_file="openhermes-2.5-mistral-7b.Q4_K_M.gguf",
-                                            model_type="mistral",
-                                            context_length=2048,
-                                            reset = True,
-                                            gpu_layers=50)
+llm = AutoModelForCausalLM.from_pretrained(model_path_or_repo_id=repo, 
+                                           model_file=model,
+                                           model_type="llama",
+                                           context_length=2048,
+                                           max_new_tokens=1,
+                                           temperature=1,
+                                           gpu_layers=40)
 
 prompt = """
-The banana plant is the largest herbaceous flowering plant.[10] All the above-ground parts of a banana plant grow from a structure usually called a "corm".[11] Plants are normally tall and fairly sturdy with a treelike appearance, but what appears to be a trunk is actually a "false stem" or pseudostem. Bananas grow in a wide variety of soils, as long as the soil is at least 60 centimetres (2.0 ft) deep, has good drainage and is not compacted.[12] Banana plants are among the fastest growing of all plants, with daily surface growth rates recorded from 1.4 square metres (15 sq ft) to 1.6 square metres (17 sq ft).[13][14]
+BSD Zero Clause License
+
+Copyright (c) [2023] [thefatcheetah]
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 """
 
 tokens = llm.tokenize(text=prompt, add_bos_token=False)
@@ -30,7 +40,7 @@ for i in range(len(tokens) - 3):
 
     # sort the probabilities
     logits = torch.tensor(logits, device="cuda:0")
-    sorted = torch.argsort(logits, descending=True).tolist()
+    sorted_logits = torch.argsort(logits, descending=True).tolist()
 
     # using the logits, get the rank of the next token
     try:
@@ -38,7 +48,7 @@ for i in range(len(tokens) - 3):
     except IndexError:
         continue
 
-    rank = sorted.index(next_token) 
+    rank = sorted_logits.index(next_token) 
     sequenceOfRanks.append(rank)
 
 llm.reset()
@@ -48,34 +58,32 @@ llm.reset()
 import array
 import brotli
 
-# some of the ranks are > 255, so we need to use a different type
+array_sequence = array.array('I', sequenceOfRanks).tobytes()
 
-arrayToSave = array.array('L', sequenceOfRanks).tobytes()
+compressed = brotli.compress(array_sequence)
 
-# could also not save the file but it's fun to store it
-
-compressedArray = brotli.compress(arrayToSave)
-print(f"\n bytes of original text : {len(prompt.encode('utf-8'))}")
-print(f"bytes of compressed text : {len(compressedArray)}")
+print(f"\nbytes of original text: {len(prompt.encode('utf-8'))}")
+print(f"bytes of tokens before compression: {len(array_sequence)}")
+print(f"bytes of tokens after  compression: {len(compressed)}")
 
 with open("compressed.bin", "wb") as f:
-    f.write(compressedArray)
+    f.write(compressed)
 
 # decompress the sequence of ranks from the file
 
 with open("compressed.bin", "rb") as f:
     arrayToLoad = f.read()
 
-arrayToLoad = brotli.decompress(arrayToLoad)
-loadedRanks = array.array('L')
-loadedRanks.frombytes(arrayToLoad)
+decompressed = brotli.decompress(arrayToLoad)
+loaded_sequence = array.array('I')
+loaded_sequence.frombytes(decompressed)
 
 # we always start with the same 4 initial tokens as the loop starts on (epoch 5)
 # TODO: we should store these in the file as well
 
 newTokens = tokens[:4]
 
-for i in range(len(loadedRanks)):
+for i in range(len(loaded_sequence)):
     sequence = newTokens[-4:]
 
     # evaluate the sequence
@@ -84,9 +92,9 @@ for i in range(len(loadedRanks)):
 
     # sort the probabilities
     logits = torch.tensor(logits, device="cuda:0")
-    sorted = torch.argsort(logits, descending=True)
+    sorted_logits = torch.argsort(logits, descending=True)
 
-    valueOfRank = sorted[loadedRanks[i]]
+    valueOfRank = sorted_logits[loaded_sequence[i]]
     newTokens.append(valueOfRank)
 
 output = llm.detokenize(newTokens)
