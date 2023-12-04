@@ -6,8 +6,8 @@ Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2
 
 It is a lossless text compression algorithm that uses large language models. Large language models are good at compression due to their natural ability to predict the next token in a sequence. LLMZip uses this ability to compress text. 
 
-It works by tokenizing the input taking a sequence of the first 4 tokens and evaluating the sequence. 
-The logits of the sequence are then used to determine the rank of the next token. Storring each rank in a sequence of ranks. Taking the original 4 tokens and the generated sequence of ranks this can then be compressed with traditional methods.
+It works by tokenizing the input taking a sequence of the first 4 tokens and evaluating the generated logits for the next token. 
+The logits are then sorted and used to determine the rank of the next token. Storring each rank in a sequence of ranks. Taking the original 4 tokens and the generated sequence of ranks this can then be compressed with traditional methods.
 
  Decompression must be performed under the same model and conditions. Re-evaluating the original 4 tokens and selecting the logit by index from the sequence of ranks for that epoch. Storing this token into a token sequence which to be detokenized back into the original text lossless.
 
@@ -32,7 +32,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 original text             : 672
 text brotli compression   : 351
 
-# llm tokens > brotli compression                          : bytes
+# sequence of ranks > brotli compression                          : bytes
 > openhermes-2.5-mistral-7b.Q4_K_M.gguf                    : 196
 > openhermes-2.5-mistral-7b.Q2_K.gguf                      : 187
 > juanako-7b-una.Q2_K.gguf                                 : 179
