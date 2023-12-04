@@ -1,10 +1,19 @@
 # LLMZip
 
-Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
+Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)A
+
+<br>
+
+It is a lossless text compression algorithm that uses large language models. Large language models are good at compression due to their natural ability to predict the next token in a sequence. LLMZip uses this ability to compress text. 
+
+It works by tokenizing the input taking a sequence of the first 4 tokens and evaluating the sequence. 
+The logits of the sequence are then used to determine the rank of the next token. Storring each rank in a sequence of ranks. Taking the original 4 tokens and the generated sequence of ranks this can then be compressed with traditional methods.
+
+ Decompression must be performed under the same model and conditions. Re-evaluating the original 4 tokens and selecting the logit by index from the sequence of ranks for that epoch. Storing this token into a token sequence which to be detokenized back into the original text lossless.
 
 Different models will produce different results.
- Some information below regarding different models I've tested on the prompt below.
 
+<br>
 
 ``` md
 # prompt:
@@ -15,26 +24,29 @@ Copyright (c) [2023] [thefatcheetah]
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.A
+
 """
 
 # model & outputs         : bytes
 original text             : 672
 text brotli compression   : 351
 
-# llm tokens > brotli compression       : bytes
-> openhermes-2.5-mistral-7b.Q4_K_M.gguf : 196
-> openhermes-2.5-mistral-7b.Q2_K.gguf   : 187
-> juanako-7b-una.Q4_K_M.gguf            : 170 *
-> juanako-7b-una.Q2_K.gguf              : 179
+# llm tokens > brotli compression                          : bytes
+> openhermes-2.5-mistral-7b.Q4_K_M.gguf                    : 196
+> openhermes-2.5-mistral-7b.Q2_K.gguf                      : 187
+> juanako-7b-una.Q2_K.gguf                                 : 179
+> juanako-7b-una.Q4_K_M.gguf                               : 170
+> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf : 161 *
 ```
-
-<br>
-
-+ advised possible to encode with arithmetic coding to reduce file size again.
 
 <br>
 
 ```
 LLMZip: Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
 ```
+
+<br>
+
+cool stuff
++ some ace information on arrays and masks : [jakevdp on boolean-arrays-and-masks](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
