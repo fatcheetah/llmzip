@@ -4,7 +4,13 @@
 
 import brotli
 import numpy as np
-from ctransformers import AutoModelForCausalLM
+import os
+import time
+import torch
+from huggingface_hub import hf_hub_download
+from rwkv.model import RWKV                         
+from rwkv.utils import PIPELINE, PIPELINE_ARGS
+
 
 # variable-length integer encoding
 def encode_varint(number):
@@ -30,10 +36,14 @@ def decode_varint(bytes_list):
 repo = "TheBloke/open-llama-3b-v2-wizard-evol-instuct-v2-196k-GGUF"
 model = "open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf"
 
-llm = AutoModelForCausalLM.from_pretrained(model_path_or_repo_id=repo, 
-                                           model_file=model,
-                                           model_type="llama",
-                                           context_length=1024)
+os.environ["RWKV_JIT_ON"] = '1'
+os.environ["RWKV_CUDA_ON"] = '0'
+
+title = "RWKV-5-World-1B5-v2-20231025-ctx4096"
+
+model_path = hf_hub_download(repo_id="BlinkDL/rwkv-5-world", filename=f"{title}.pth")
+model = RWKV(model=model_path, strategy='cuda fp32')
+pipeline = PIPELINE(model, "rwkv_vocab_v20230424")
 
 prompt = """
 BSD Zero Clause License
@@ -46,9 +56,13 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 """
 
-tokens = llm.tokenize(text=prompt, add_bos_token=False)
+tokens = pipeline.encode(prompt)
 
-sequence_of_ranks = [] 
+start_time = time.time()
+sequence_of_ranks = []
+
+# create an initial state for the model
+state = None
 for i in range(len(tokens) - 3):
     # take a sequence of 4 tokens from current i 
     sequence = tokens[i:i+4]
@@ -60,9 +74,8 @@ for i in range(len(tokens) - 3):
         continue
 
     # evaluate the sequence and store the logits
-    llm.eval(tokens=sequence)
-    logits = llm.logits
-    logits = np.array(logits, dtype=np.float32)
+    out, state = model.forward(sequence, state)
+    logits = np.array(out.detach().cpu(), dtype=np.float32)
 
     # get the logit of the next token
     next_token_logit = logits[next_token]
@@ -72,7 +85,14 @@ for i in range(len(tokens) - 3):
     rank = np.count_nonzero(mask)
     sequence_of_ranks.append(encode_varint(rank))
 
-llm.reset()
+end_time = time.time()
+elapsed_time = end_time - start_time
+# get the average time per token
+time_per_token = elapsed_time / len(tokens)
+print(f"elapsed time: {elapsed_time}")
+print(f"time per token: {time_per_token}")
+
+torch.cuda.empty_cache()
 
 # save the sequence of ranks to a file (compressed) with brotli compression
 bytes_of_ranks = b''.join(sequence_of_ranks)
@@ -87,6 +107,7 @@ with open("compressed.bin", "wb") as f:
 
 # # we always start with the same 4 initial tokens as the loop starts on (epoch 5)
 # # TODO: we should store these in the file as well
+new_tokens = tokens[:4]
 
 # # decompress the sequence of ranks from the file
 with open("compressed.bin", "rb") as f:
@@ -100,7 +121,7 @@ while i < len(decompressed_bytes):
     # get the next varint from bytes_of_ranks
     varint_bytes = []
     while True:
-        byte = bytes_of_ranks[i]
+        byte = decompressed_bytes[i]
         varint_bytes.append(byte)
         i += 1
         if byte & 128 == 0:
@@ -110,20 +131,19 @@ while i < len(decompressed_bytes):
     rank = decode_varint(varint_bytes)
     loaded_sequence.append(rank)
 
-
-new_tokens = tokens[:4]
+state = None
 for i in range(len(loaded_sequence)):
     sequence = new_tokens[-4:]
 
     # evaluate the sequence and store the logits
-    llm.eval(tokens=sequence)
-    logits = llm.logits
-    logits = np.array(logits, dtype=np.float32)
+    out, state = model.forward(sequence, state)
+    logits = np.array(out.detach().cpu(), dtype=np.float32)
 
     # get the indices of the logits sorted in descending order
     sorted_logits = np.argsort(logits)[::-1]
     value_of_rank = sorted_logits[loaded_sequence[i]]
     new_tokens.append(value_of_rank)
-output_tokens = llm.detokenize(new_tokens)
+
+output_tokens = pipeline.decode(new_tokens)
 
 print(output_tokens)

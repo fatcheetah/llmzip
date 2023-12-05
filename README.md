@@ -1,6 +1,6 @@
 # LLMZip
 
-Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)A
+Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
 
 <br>
 
@@ -25,7 +25,7 @@ Copyright (c) [2023] [thefatcheetah]
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.A
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 """
 
@@ -42,21 +42,33 @@ text brotli compression : 351
 
 # ranks variable length encdoded bytes > brotli compression : bytes
 > open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf  : 123 * 
+> RWKV-5-World-1B5-v2-20231025-ctx4096                      : 125  
+
+## Super fast compression using RWKV! : seconds
+* elapsed time                     : 3.10
+* time per token                   : 0.0208
+
 ```
 
 <br>
 
 ## cool stuff
  
+### LLMZip Paper
+ Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+
+<br>
+
+### RWKV
+ Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+
+ <br>
+
  ### Jake VanderPlas on boolean arrays and masks
  [https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
 
  <br>
 
-### LLMZip Paper
- Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
-
-<br>
 
 ### What is variable-length integer encoding?
 
