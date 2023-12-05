@@ -1,6 +1,6 @@
 # implementation of LLMZip by thefatcheetah
 # LLMZip: Lossless Text Compression using LargeLanguage Models
-# [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
+# [https://arxiv.org/pdf/2306.04050.pdf]
 
 import brotli
 import numpy as np
@@ -100,7 +100,7 @@ while i < len(decompressed_bytes):
     # get the next varint from bytes_of_ranks
     varint_bytes = []
     while True:
-        byte = bytes_of_ranks[i]
+        byte = decompressed_bytes[i]
         varint_bytes.append(byte)
         i += 1
         if byte & 128 == 0:

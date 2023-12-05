@@ -1,13 +1,13 @@
 # LLMZip
 
-Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)A
+Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
 
 <br>
 
 It is a lossless text compression algorithm that uses large language models. Large language models are good at compression due to their natural ability to predict the next token in a sequence. LLMZip uses this ability to compress text. 
 
 It works by tokenizing the input taking a sequence of the first 4 tokens and evaluating the generated logits for the next token. 
-The logits are then sorted and used to determine the rank of the next token. Storring each rank in a sequence of ranks. Taking the original 4 tokens and the generated sequence of ranks this can then be compressed with traditional methods.
+The logits are then sorted and used to determine the rank of the next token. Storing each rank in a sequence of ranks. Taking the original 4 tokens and the generated sequence of ranks this can then be compressed with traditional methods.
 
  Decompression must be performed under the same model and conditions. Re-evaluating the original 4 tokens and selecting the logit by index from the sequence of ranks for that epoch. Storing this token into a token sequence which to be detokenized back into the original text lossless.
 
@@ -54,12 +54,11 @@ text brotli compression : 351
  <br>
 
 ### LLMZip Paper
- Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+ Lossless Text Compression using Large Language Models - [https://arxiv.org/abs/2306.04050](https://arxiv.org/abs/2306.04050)- Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
 
 <br>
 
 ### What is variable-length integer encoding?
 
-Variable-length integer encoding is a method of encoding integers in a way that uses less space for smaller numbers. It's often used in file formats and data storage for more efficient use of space.
-
+Variable-length integer encoding is a method of encoding integers in a way that uses less space. 
 One common form of variable-length integer encoding is "Base 128 Varint" used in Google's Protocol Buffers. In this encoding, each byte of the integer is stored in 7 bits of an output byte, and the 8th bit is used as a continuation bit. The continuation bit is set to 1 for all bytes except the last, which signals the end of the number.
