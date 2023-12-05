@@ -32,9 +32,6 @@ def decode_varint(bytes_list):
     return number
 
 
-repo = "TheBloke/open-llama-3b-v2-wizard-evol-instuct-v2-196k-GGUF"
-model = "open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf"
-
 os.environ["RWKV_JIT_ON"] = '1'
 os.environ["RWKV_CUDA_ON"] = '0'
 
