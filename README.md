@@ -49,7 +49,7 @@ text brotli compression : 351
 ## cool stuff
  
  ### Jake VanderPlas on boolean arrays and masks
- [weblink > jakevdp on boolean-arrays-and-masks](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
+ [https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
 
  <br>
 
