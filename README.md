@@ -11,9 +11,10 @@ The logits are then sorted and used to determine the rank of the next token. Sto
 
  Decompression must be performed under the same model and conditions. Re-evaluating the original 4 tokens and selecting the logit by index from the sequence of ranks for that epoch. Storing this token into a token sequence which to be detokenized back into the original text lossless.
 
-Different models will produce different results.
+ <br>
 
-<br>
+**Different models will produce different results.**
+
 
 ``` md
 # prompt:
@@ -45,21 +46,20 @@ text brotli compression : 351
 
 <br>
 
-```
-LLMZip: Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
-```
+## cool stuff
+ 
+ ### Jake VanderPlas on boolean arrays and masks
+ [weblink > jakevdp on boolean-arrays-and-masks](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
+
+ <br>
+
+### LLMZip Paper
+ Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
 
 <br>
 
-cool stuff
-+ some ace information on arrays and masks : [jakevdp on boolean-arrays-and-masks](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
-
-<br>
-
-``` md
-# What is variable-length integer encoding?
+### What is variable-length integer encoding?
 
 Variable-length integer encoding is a method of encoding integers in a way that uses less space for smaller numbers. It's often used in file formats and data storage for more efficient use of space.
 
 One common form of variable-length integer encoding is "Base 128 Varint" used in Google's Protocol Buffers. In this encoding, each byte of the integer is stored in 7 bits of an output byte, and the 8th bit is used as a continuation bit. The continuation bit is set to 1 for all bytes except the last, which signals the end of the number.
-```
