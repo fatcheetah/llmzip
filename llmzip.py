@@ -32,13 +32,11 @@ def decode_varint(bytes_list):
     return number
 
 
+title = "RWKV-5-World-3B-v2-20231113-ctx4096"
+
 os.environ["RWKV_JIT_ON"] = '1'
-os.environ["RWKV_CUDA_ON"] = '0'
-
-title = "RWKV-5-World-1B5-v2-20231025-ctx4096"
-
 model_path = hf_hub_download(repo_id="BlinkDL/rwkv-5-world", filename=f"{title}.pth")
-model = RWKV(model=model_path, strategy='cuda fp32')
+model = RWKV(model=model_path, strategy='cuda fp16')
 pipeline = PIPELINE(model, "rwkv_vocab_v20230424")
 
 prompt = """
@@ -55,9 +53,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 tokens = pipeline.encode(prompt)
 
 sequence_of_ranks = []
-
 # create an initial state for the model
-state = None
 for i in range(len(tokens) - 3):
     # take a sequence of 4 tokens from current i 
     sequence = tokens[i:i+4]
@@ -68,19 +64,14 @@ for i in range(len(tokens) - 3):
     except IndexError:
         continue
 
-    # evaluate the sequence and store the logits
-    out, state = model.forward(sequence, state)
-    logits = np.array(out.detach().cpu(), dtype=np.float32)
+    # evaluate the sequence and sort the logits
+    out, state = model.forward(sequence, None)
+    logits = out.detach().cpu().numpy()
+    sorted_logits = np.argsort(logits)[::-1].tolist()
 
-    # get the logit of the next token
-    next_token_logit = logits[next_token]
-
-    # create a mask where the value is True if the logit is greater than the next token's logit
-    mask = logits > next_token_logit
-    rank = np.count_nonzero(mask)
+    # get the rank of the next token
+    rank = sorted_logits.index(next_token)
     sequence_of_ranks.append(encode_varint(rank))
-
-torch.cuda.empty_cache()
 
 # save the sequence of ranks to a file (compressed) with brotli compression
 bytes_of_ranks = b''.join(sequence_of_ranks)
@@ -119,13 +110,12 @@ while i < len(decompressed_bytes):
     rank = decode_varint(varint_bytes)
     loaded_sequence.append(rank)
 
-state = None
 for i in range(len(loaded_sequence)):
     sequence = new_tokens[-4:]
 
-    # evaluate the sequence and store the logits
-    out, state = model.forward(sequence, state)
-    logits = np.array(out.detach().cpu(), dtype=np.float32)
+    # evaluate the sequence and sort the logits
+    out, state = model.forward(sequence, None)
+    logits = out.detach().cpu().numpy()
 
     # get the indices of the logits sorted in descending order
     sorted_logits = np.argsort(logits)[::-1]
@@ -133,5 +123,4 @@ for i in range(len(loaded_sequence)):
     new_tokens.append(value_of_rank)
 
 output_tokens = pipeline.decode(new_tokens)
-
 print(output_tokens)
