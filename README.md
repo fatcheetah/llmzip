@@ -55,12 +55,15 @@ text brotli compression : 351
 ## cool stuff
  
 ### LLMZip Paper
- Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+ Lossless Text Compression using Large Language Models - [https://arxiv.org/abs/2306.04050](https://arxiv.org/abs/2306.04050) - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
 
 <br>
 
 ### RWKV
- Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+[https://github.com/BlinkDL/RWKV-LM](https://github.com/BlinkDL/RWKV-LM)
+
+RWKV is an RNN with Transformer-level LLM performance, which can also be directly trained like a GPT transformer (parallelizable). And it's 100% attention-free. You only need the hidden state at position t to compute the state at position t+1. You can use the "GPT" mode to quickly compute the hidden state for the "RNN" mode.
+
 
  <br>
 
