@@ -40,13 +40,15 @@ text brotli compression : 351
 > juanako-7b-una.Q4_K_M.gguf                               : 170
 > open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf : 161 
 
-# ranks variable length encdoded bytes > brotli compression : bytes
-> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf  : 123 * 
-> RWKV-5-World-1B5-v2-20231025-ctx4096                      : 125  
+# ranks variable length encoded bytes > brotli compression : bytes
+> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf : 123
 
-## Super fast compression using RWKV! : seconds
-* elapsed time                     : 3.10
-* time per token                   : 0.0208
+> RWKV-5-World-1B5-v2-20231025-ctx4096                     : 125 
+> RWKV-5-World-3B-v2-20231113-ctx4096                      : 81
+
+### Super fast compression using RWKV! ### 
+( Nvidia 3090 - RWKV-5-World-3B-v2-20231113-ctx4096 )
+* Logit ranking and compression total time: 2.87 seconds
 
 ```
 
