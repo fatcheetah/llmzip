@@ -1,6 +1,6 @@
 # LLMZip
 
-Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
+Thrown together implementation of LLMZip from the paper [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)A
 
 <br>
 
@@ -25,7 +25,7 @@ Copyright (c) [2023] [thefatcheetah]
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.A
 
 """
 
@@ -42,36 +42,21 @@ text brotli compression : 351
 
 # ranks variable length encdoded bytes > brotli compression : bytes
 > open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf  : 123 * 
-> RWKV-5-World-1B5-v2-20231025-ctx4096                      : 125  
-
-## Super fast compression using RWKV! : seconds
-* elapsed time                     : 3.10
-* time per token                   : 0.0208
-
 ```
 
 <br>
 
 ## cool stuff
  
-### LLMZip Paper
- Lossless Text Compression using Large Language Models - [https://arxiv.org/abs/2306.04050](https://arxiv.org/abs/2306.04050) - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
-
-<br>
-
-### RWKV
-[https://github.com/BlinkDL/RWKV-LM](https://github.com/BlinkDL/RWKV-LM)
-
-RWKV is an RNN with Transformer-level LLM performance, which can also be directly trained like a GPT transformer (parallelizable). And it's 100% attention-free. You only need the hidden state at position t to compute the state at position t+1. You can use the "GPT" mode to quickly compute the hidden state for the "RNN" mode.
-
-
- <br>
-
  ### Jake VanderPlas on boolean arrays and masks
  [https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
 
  <br>
 
+### LLMZip Paper
+ Lossless Text Compression using Large Language Models - https://arxiv.org/abs/2306.04050 - Chandra Shekhara Kaushik Valmeekam, Krishna Narayanan, Dileep Kalathil, Jean-Francois Chamberland, Srinivas Shakkottai
+
+<br>
 
 ### What is variable-length integer encoding?
 
