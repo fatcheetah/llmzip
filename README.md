@@ -28,16 +28,19 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 """
 
-# model & outputs         : bytes
-original text             : 672
-text brotli compression   : 351
+# model & outputs       : bytes
+original text           : 672
+text brotli compression : 351
 
-# sequence of ranks > brotli compression                          : bytes
+# sequence of ranks > brotli compression                   : bytes
 > openhermes-2.5-mistral-7b.Q4_K_M.gguf                    : 196
 > openhermes-2.5-mistral-7b.Q2_K.gguf                      : 187
 > juanako-7b-una.Q2_K.gguf                                 : 179
 > juanako-7b-una.Q4_K_M.gguf                               : 170
-> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf : 161 *
+> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf : 161 
+
+# ranks variable length encdoded bytes > brotli compression : bytes
+> open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf  : 123 * 
 ```
 
 <br>
@@ -50,3 +53,13 @@ LLMZip: Lossless Text Compression using Large Language Models - https://arxiv.or
 
 cool stuff
 + some ace information on arrays and masks : [jakevdp on boolean-arrays-and-masks](https://jakevdp.github.io/PythonDataScienceHandbook/02.06-boolean-arrays-and-masks.html)
+
+<br>
+
+``` md
+# What is variable-length integer encoding?
+
+Variable-length integer encoding is a method of encoding integers in a way that uses less space for smaller numbers. It's often used in file formats and data storage for more efficient use of space.
+
+One common form of variable-length integer encoding is "Base 128 Varint" used in Google's Protocol Buffers. In this encoding, each byte of the integer is stored in 7 bits of an output byte, and the 8th bit is used as a continuation bit. The continuation bit is set to 1 for all bytes except the last, which signals the end of the number.
+```

@@ -6,6 +6,27 @@ import brotli
 import numpy as np
 from ctransformers import AutoModelForCausalLM
 
+# variable-length integer encoding
+def encode_varint(number):
+    bytes_list = []
+    while number > 127:
+        bytes_list.append((number & 127) | 128)
+        number >>= 7
+    bytes_list.append(number)
+    return bytes(bytes_list)
+
+
+def decode_varint(bytes_list):
+    number = 0
+    shift = 0
+    for byte in bytes_list:
+        number |= (byte & 127) << shift
+        if byte & 128 == 0:
+            break
+        shift += 7
+    return number
+
+
 repo = "TheBloke/open-llama-3b-v2-wizard-evol-instuct-v2-196k-GGUF"
 model = "open-llama-3b-v2-wizard-evol-instuct-v2-196k.Q3_K_S.gguf"
 
@@ -15,7 +36,14 @@ llm = AutoModelForCausalLM.from_pretrained(model_path_or_repo_id=repo,
                                            context_length=1024)
 
 prompt = """
-It is a lossless text compression algorithm that uses large language models. Large lagnguage models are good at compression due to their natural ability to predict the next token in a sequence. LLMZip uses this ability to compress text. 
+BSD Zero Clause License
+
+Copyright (c) [2023] [thefatcheetah]
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 """
 
 tokens = llm.tokenize(text=prompt, add_bos_token=False)
@@ -42,30 +70,46 @@ for i in range(len(tokens) - 3):
     # create a mask where the value is True if the logit is greater than the next token's logit
     mask = logits > next_token_logit
     rank = np.count_nonzero(mask)
-    sequence_of_ranks.append(rank)
+    sequence_of_ranks.append(encode_varint(rank))
 
 llm.reset()
 
 # save the sequence of ranks to a file (compressed) with brotli compression
-array_sequence = np.array(sequence_of_ranks, dtype=np.uint32).tobytes()
-compressed = brotli.compress(array_sequence)
+bytes_of_ranks = b''.join(sequence_of_ranks)
+compressed_bytes = brotli.compress(bytes_of_ranks)
 
 print(f"\nbytes of original text: {len(prompt.encode('utf-8'))}")
-print(f"bytes of tokens before compression: {len(array_sequence)}")
-print(f"bytes of tokens after  compression: {len(compressed)}")
+print(f"bytes of tokens before compression: {len(bytes_of_ranks)}")
+print(f"bytes of tokens after  compression: {len(compressed_bytes)}")
 
 with open("compressed.bin", "wb") as f:
-    f.write(compressed)
+    f.write(compressed_bytes)
 
-# we always start with the same 4 initial tokens as the loop starts on (epoch 5)
-# TODO: we should store these in the file as well
+# # we always start with the same 4 initial tokens as the loop starts on (epoch 5)
+# # TODO: we should store these in the file as well
 
-# decompress the sequence of ranks from the file
+# # decompress the sequence of ranks from the file
 with open("compressed.bin", "rb") as f:
     array_to_load = f.read()
 
-decompressed = brotli.decompress(array_to_load)
-loaded_sequence = np.frombuffer(decompressed, dtype=np.uint32)
+decompressed_bytes = brotli.decompress(array_to_load)
+
+loaded_sequence = []
+i = 0
+while i < len(decompressed_bytes):
+    # get the next varint from bytes_of_ranks
+    varint_bytes = []
+    while True:
+        byte = bytes_of_ranks[i]
+        varint_bytes.append(byte)
+        i += 1
+        if byte & 128 == 0:
+            break
+
+    # decode the varint and add it to loaded_sequence
+    rank = decode_varint(varint_bytes)
+    loaded_sequence.append(rank)
+
 
 new_tokens = tokens[:4]
 for i in range(len(loaded_sequence)):
