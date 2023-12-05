@@ -1,15 +1,14 @@
 # implementation of LLMZip by thefatcheetah
 # LLMZip: Lossless Text Compression using LargeLanguage Models
-# [https://arxiv.org/pdf/2306.04050.pdf](https://arxiv.org/pdf/2306.04050.pdf)
+# [https://arxiv.org/pdf/2306.04050.pdf]
 
 import brotli
 import numpy as np
 import os
-import time
 import torch
 from huggingface_hub import hf_hub_download
-from rwkv.model import RWKV                         
-from rwkv.utils import PIPELINE, PIPELINE_ARGS
+from rwkv.model import RWKV
+from rwkv.utils import PIPELINE
 
 
 # variable-length integer encoding
@@ -58,7 +57,6 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 tokens = pipeline.encode(prompt)
 
-start_time = time.time()
 sequence_of_ranks = []
 
 # create an initial state for the model
@@ -84,13 +82,6 @@ for i in range(len(tokens) - 3):
     mask = logits > next_token_logit
     rank = np.count_nonzero(mask)
     sequence_of_ranks.append(encode_varint(rank))
-
-end_time = time.time()
-elapsed_time = end_time - start_time
-# get the average time per token
-time_per_token = elapsed_time / len(tokens)
-print(f"elapsed time: {elapsed_time}")
-print(f"time per token: {time_per_token}")
 
 torch.cuda.empty_cache()
 
