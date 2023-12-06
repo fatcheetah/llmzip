@@ -77,6 +77,7 @@ RWKV is an RNN with Transformer-level LLM performance, which can also be directl
 
 ### What is variable-length integer encoding?
 
+[https://protobuf.dev/programming-guides/encoding/](https://protobuf.dev/programming-guides/encoding/)
 Variable-length integer encoding is a method of encoding integers in a way that uses less space for smaller numbers. It's often used in file formats and data storage for more efficient use of space.
 
 One common form of variable-length integer encoding is "Base 128 Varint" used in Google's Protocol Buffers. In this encoding, each byte of the integer is stored in 7 bits of an output byte, and the 8th bit is used as a continuation bit. The continuation bit is set to 1 for all bytes except the last, which signals the end of the number.
